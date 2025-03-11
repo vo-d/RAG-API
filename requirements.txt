@@ -1,0 +1,13 @@
+langchain
+langchain-community
+chromadb
+unstructured
+langchain-openai
+tiktoken
+fastapi
+python-dotenv
+langchain-google-vertexai
+langchain-huggingface
+uvicorn
+nltk
+sentence-transformers
