@@ -22,16 +22,15 @@ docs = split_docs(documents)
 
 
 # from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_community.vectorstores import Chroma
 from dotenv import load_dotenv
 import os
 
 # from langchain_community.embeddings import SentenceTransformerEmbeddings
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+embeddings = OllamaEmbeddings(model="mxbai-embed-large")
 
 # using chromadb as a vectorstore and storing the docs in it
-# from langchain_community.vectorstores import Chroma
 db = Chroma.from_documents(docs, embeddings)
 
 # Doing similarity search  using query
@@ -40,8 +39,6 @@ matching_docs = db.similarity_search(query)
 
 print(matching_docs[0])
 
-# from langchain_community.llms import HuggingFaceHub
-from langchain_community.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 from dotenv import load_dotenv
@@ -64,9 +61,7 @@ def get_answer(q : str):
     prompt_template = PromptTemplate(template=template, input_variables=["question", "context"])
     repo_id = "google/gemma-2b-it"
     
-    # llm = HuggingFaceHub(repo_id=repo_id, model_kwargs={"temperature": 0.5, "max_length": 64,"max_new_tokens":512})
-
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+    llm = ChatOllama(model="deepseek-r1:latest", temperature=0)
    
     chain = RetrievalQA.from_chain_type(llm=llm, 
             chain_type="stuff", 
@@ -91,7 +86,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -103,6 +98,6 @@ def question_handler(question: Question):
     response = {"result": answer["result"].replace("\n", "<br/> "), "query": answer["query"]}
     return response
 
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run(app, host="0.0.0.0", port=8080)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)
