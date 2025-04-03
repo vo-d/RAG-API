@@ -27,8 +27,12 @@ from langchain_community.vectorstores import Chroma
 from dotenv import load_dotenv
 import os
 
+load_dotenv()
+# Use the environment variables for Ollama and Deepseek
+ollama_url = os.getenv("OLLAMA_BASE_URL")
+print("This is url: " + ollama_url)
 # from langchain_community.embeddings import SentenceTransformerEmbeddings
-embeddings = OllamaEmbeddings(model="mxbai-embed-large")
+embeddings = OllamaEmbeddings(model="mxbai-embed-large", base_url=ollama_url)
 
 # using chromadb as a vectorstore and storing the docs in it
 db = Chroma.from_documents(docs, embeddings)
@@ -41,7 +45,6 @@ print(matching_docs[0])
 
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
-from dotenv import load_dotenv
 
 #load_dotenv()
 #os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY")
@@ -61,7 +64,7 @@ def get_answer(q : str):
     prompt_template = PromptTemplate(template=template, input_variables=["question", "context"])
     repo_id = "google/gemma-2b-it"
     
-    llm = ChatOllama(model="deepseek-r1:latest", temperature=0)
+    llm = ChatOllama(model="deepseek-r1:latest", temperature=0, base_url=ollama_url)
    
     chain = RetrievalQA.from_chain_type(llm=llm, 
             chain_type="stuff", 
@@ -98,6 +101,6 @@ def question_handler(question: Question):
     response = {"result": answer["result"].replace("\n", "<br/> "), "query": answer["query"]}
     return response
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8080)
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8080)

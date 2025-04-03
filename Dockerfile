@@ -14,9 +14,9 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Copy local code to the container
 COPY . /app
- 
+
 # Expose the port the app will be running on
-EXPOSE 9000
+EXPOSE 8080
 
 # Command to run the application
-CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "9000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
