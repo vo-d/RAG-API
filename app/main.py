@@ -30,7 +30,6 @@ import os
 load_dotenv()
 # Use the environment variables for Ollama and Deepseek
 ollama_url = os.getenv("OLLAMA_BASE_URL")
-print("This is url: " + ollama_url)
 # from langchain_community.embeddings import SentenceTransformerEmbeddings
 embeddings = OllamaEmbeddings(model="mxbai-embed-large", base_url=ollama_url)
 
@@ -38,10 +37,10 @@ embeddings = OllamaEmbeddings(model="mxbai-embed-large", base_url=ollama_url)
 db = Chroma.from_documents(docs, embeddings)
 
 # Doing similarity search  using query
-query = "I don't have coding skill, can I still enter?"
-matching_docs = db.similarity_search(query)
+# query = "I don't have coding skill, can I still enter?"
+# matching_docs = db.similarity_search(query)
 
-print(matching_docs[0])
+# print(matching_docs[0])
 
 from langchain.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
