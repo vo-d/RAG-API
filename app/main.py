@@ -48,30 +48,30 @@ from langchain.chains import RetrievalQA
 #load_dotenv()
 #os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY")
 
-def get_answer(q : str):
-   
-    template = """
-     System:
-        You are Builder's League Discord Chatbot, a Chatbot design specifically to answer question asked by participant relating the Builder's League Hackathon. 
-        Do not put html tags in your response.
-       
-        {context}
-
-        Question: {question}
-        Helpful Answer:
-    """
-    prompt_template = PromptTemplate(template=template, input_variables=["question", "context"])
-    repo_id = "google/gemma-2b-it"
+template = """
+    System:
+    You are Builder's League Discord Chatbot, a Chatbot design specifically to answer question asked by participant relating the Builder's League Hackathon. 
+    Do not put html tags in your response.
     
-    llm = ChatOllama(model="deepseek-r1:latest", temperature=0, base_url=ollama_url)
-   
-    chain = RetrievalQA.from_chain_type(llm=llm, 
-            chain_type="stuff", 
-            retriever=db.as_retriever(), 
-            return_source_documents=True,
-            chain_type_kwargs={"prompt": prompt_template}
-    )
+    {context}
 
+    Question: {question}
+    Helpful Answer:
+    """
+    
+prompt_template = PromptTemplate(template=template, input_variables=["question", "context"])
+repo_id = "google/gemma-2b-it"
+
+llm = ChatOllama(model="deepseek-r1:latest", temperature=0, base_url=ollama_url)
+
+chain = RetrievalQA.from_chain_type(llm=llm, 
+        chain_type="stuff", 
+        retriever=db.as_retriever(), 
+        return_source_documents=True,
+        chain_type_kwargs={"prompt": prompt_template}
+)
+
+def get_answer(q : str):
     result = chain.invoke({"query": q})
     return result
 
