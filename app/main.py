@@ -34,7 +34,8 @@ ollama_url = os.getenv("OLLAMA_BASE_URL")
 embeddings = OllamaEmbeddings(model="mxbai-embed-large", base_url=ollama_url)
 
 # using chromadb as a vectorstore and storing the docs in it
-db = Chroma.from_documents(docs, embeddings)
+db = Chroma.from_documents(docs, embeddings, persist_directory="./chroma_db")
+db.persist()
 
 # Doing similarity search  using query
 # query = "I don't have coding skill, can I still enter?"
@@ -58,11 +59,11 @@ template = """
     Question: {question}
     Helpful Answer:
     """
-    
+
 prompt_template = PromptTemplate(template=template, input_variables=["question", "context"])
 repo_id = "google/gemma-2b-it"
 
-llm = ChatOllama(model="deepseek-r1:latest", temperature=0, base_url=ollama_url)
+llm = ChatOllama(model="gemma3:latest", temperature=0, base_url=ollama_url)
 
 chain = RetrievalQA.from_chain_type(llm=llm, 
         chain_type="stuff", 
